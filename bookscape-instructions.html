@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<!-- Final Project:
+ * Book-scape: De Augmentis Scientiarum
+ * Eliza Mcnair
+ * December 20, 2016
+ * ---Book-scape---
+ * A THREE.js model of a Baroque title page from Francis Bacon's "De Augmentis Scientiarum"
+ 
+ * Book Citation: 
+ 
+ 	Bacon, Francis. "De Augmentis scientiarum: of the advancement and proficience of learning, or the partitions of sciences, IX books. Written in Latin by the most eminent, illustrious & famous Lord Francis Bacon ... Interpreted by Gilbert Wats." Oxford: Printed by Leon: Lichfield, Printer to the University, for Rob: Young, & Ed: Forrest, 1640.   Wellesley College Library, Special Collections.  -->
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Final Project: Book-scape</title>
+        <link href='https://fonts.googleapis.com/css?family=Poppins:700|Quicksand' rel='stylesheet' type='text/css'>   
+        <style>
+            canvas {
+                  display: block;
+                  margin: 10px auto;
+                  width: 75%;
+              }
+            p {
+                width:45%;
+                margin:auto;
+                font-family: "Quicksand", sans-serif;
+            }
+            h1, h2, h3, h4, h5{
+                font-family: "Poppins", sans-serif;
+                margin:auto;
+            }
+            
+            ul {
+                width: 55%;
+                margin:auto;
+                font-family: "Quicksand", sans-serif;
+            }
+            .ref {
+                text-align: center;
+                padding: 10px;
+                margin: auto;
+                max-width: 600px; 
+                max-height: 300px; 
+            }
+            .photos {
+                text-align: center;
+            }
+        </style>
+        <script src="https://cs.wellesley.edu/~cs307/threejs/libs/three.min.js"></script>
+        <script src="https://cs.wellesley.edu/~cs307/threejs/libs/OrbitControls.js"></script>
+        <script src="https://cs.wellesley.edu/~cs307/threejs/libs/tw.js"></script>
+        <script src="https://cs.wellesley.edu/~cs307/threejs/libs/dat.gui.min.js"></script>   
+        <script src="book_title_page.js"></script>
+    </head>
+    
+    <body>
+    <h1 style="text-align:center;">Book-scape: <i>De Augmentis Scientiarum</i></h1>
+    <h3 style="text-align:center;">Eliza McNair</h3>
+
+    <h3 style="text-align:center;">Artist Statement: </h3>
+        
+    <p style="text-align:center;">My goal for this project was to create a three-dimensional interpretation of a Baroque, illustrated title page from one of Wellesley's Special Collections Rare Books - or, a book-scape. The book I chose to work from is Francis Bacon's <i>De Augmentis scientiarum: of the advancement and proficience of learning, or the partitions of sciences</i>. The title page was illustrated by William Marshall, a seventeenth century British engraver. Although I've taken some liberties with the content of my scene, both for practical and artistic purposes, each element that I've added thus far has been made to reflect some aspect of Marshall's design.  </p>
+    <br>
+    <br>
+    <h3 style="text-align:center;">Original Image:</h3>
+      
+    <div style="text-align:center;">
+        <img src="images/deaugmentistitle.jpg" alt="De Augmentis Title Page" style="max-width:30%;"> 
+    </div>
+    <br>
+        
+    <h3 style="text-align:center;">Instructions:</h3> 
+        
+    <p>To explore the book-scape, scroll to the scene below, click on it, then begin pressing <strong>'w'</strong> until you have navigated into the hemisphere through the page. Once in the book-scape, you can continue to move forwards or backwards with <strong>'w'</strong> and <strong>'s'</strong>, move up or down (<strong>'u'</strong> and <strong>'o'</strong>), look up or down (<strong>'i'</strong> and <strong>'k'</strong>), turn left or right (<strong>'j'</strong> and <strong>'l'</strong>), and animate the owl with <strong>'r'</strong> and <strong>'t'</strong>. Pressing <strong>'r'</strong> makes the owl fly up and forwards, while pressing <strong>'t'</strong> makes it fly down and back. Be careful not to click either 'r' or 't' while the owl is already in motion - this will crash the animation. If this occurs, refresh the page and try again. Enjoy! </p>
+    <br>
+        
+    <div style = "float:left; width:15%;">
+    <h4 style="text-align:center;">Interact with the Book-scape:</h4>
+        <!-- <p style="text-align:center;"><strong>"0"</strong> - reset animation</p>
+        <p style="text-align:center;"><strong>"1"</strong> - advance by one step</p>
+        <p style="text-align:center;"><strong>"h"</strong> - start animation</p>
+        <p style="text-align:center;"><strong>"g"</strong> - stop animation</p> -->
+        <h5 style="text-align:center;">Move: </h5>
+        <p style="text-align:center;"><strong>"w"</strong> - move forward</p>
+        <p style="text-align:center;"><strong>"s"</strong> - move backwards</p>
+        <h5 style="text-align:center;">Look Around:</h5>
+        <p style="text-align:center;"><strong>"i"</strong> - look up</p>
+        <p style="text-align:center;"><strong>"k"</strong> - look down</p> 
+        <p style="text-align:center;"><strong>"j"</strong> - look left</p>
+        <p style="text-align:center;"><strong>"l"</strong> - look right</p>
+        <h5 style="text-align:center;">Fly: </h5>
+        <p style="text-align:center;"><strong>"u"</strong> - rise up</p>
+        <p style="text-align:center;"><strong>"o"</strong> - lower down</p> 
+        <h5 style="text-align:center;">Animate Owl: </h5>
+        <p style="text-align:center;"><strong>"r"</strong> - launch owl</p>
+        <p style="text-align:center;"><strong>"t"</strong> - lower owl</p>
+</div>
+        
+    <script>
+        // Set up scene: 
+        var scene = new THREE.Scene();  
+
+        // Adds lighting to the scene: 
+        // Ambient Light Source:
+        /* Establishes the color of the light source (white), then creates the light at 0.25 intensity and adds it to the scene. Ambient lighting is not the main light source for the scene. */
+        var ambiColor = new THREE.Color( 0xFFFFFF); 
+        var ambientLight = new THREE.AmbientLight(ambiColor, 0.25);
+        scene.add(ambientLight);
+        
+        // Sets up the renderer: 
+        var renderer = new THREE.WebGLRenderer();
+        
+        TW.mainInit(renderer,scene);
+        
+        // Initial Camera Values: 
+        // Used to create a Perspective Camera that can be adjusted via functions
+        // defined below. 
+        
+        // Initially, the camera is set far away from the scene so that the full page is visible. 
+        var cameraParams = {
+            eyex: 0,
+            eyey: 50,
+            eyez: 1000, 
+
+            upx: 0,
+            upy: 1,
+            upz: 0, 
+
+            atx: 0, 
+            aty: 50,
+            atz: -1600,
+            
+            vpnx: 0,
+            vpny: 0, 
+            vpnz: -1,
+
+            fov: 90, 
+            aspect: 1800/900,
+            near: 2, 
+            far: 4000
+        };
+
+        // Sets up the Perspective Camera that is used in the scene: 
+        function setupCamera() {
+
+            // Camera Basics:         
+            var fov    = cameraParams.fov;  // in degrees
+            var aspect = cameraParams.aspect;  // canvas width/height
+            var near   = cameraParams.near;  // measured from eye
+            var far    = cameraParams.far;  // measured from eye
+
+            var camera = new THREE.PerspectiveCamera(fov,aspect,near,far);
+            
+            // Setup Camera: 
+            // Position (eye), Up, At, VPN, and Vright - sets these five camera attributes:
+            camera.position.set(cameraParams.eyex,cameraParams.eyey,cameraParams.eyez);
+
+            camera.up.set(cameraParams.upx,cameraParams.upy,cameraParams.upz);
+
+            var at = new THREE.Vector3(cameraParams.atx, cameraParams.aty, cameraParams.atz);
+            camera.at = at;
+            camera.lookAt( at); 
+            
+            camera.vpn = new THREE.Vector3(cameraParams.vpnx, cameraParams.vpny, cameraParams.vpnz);
+            
+            camera.vright = new THREE.Vector3(1,0,0);
+
+            // Methods for interacting with the scene:
+            // Each method can be invoked after a camera is instantiated with setupCamera()
+            
+            /* Moves the camera "forward", in the negative Z direction, a given distance 'num' 
+            so long as the camera has not reached the back of the hemisphere at z = -1600 */ 
+            camera.stepForward = function(num) {
+                if (cameraParams.eyez > -1600) {
+                    cameraParams.eyez = cameraParams.eyez - num; 
+                    this.position.set(cameraParams.eyex,cameraParams.eyey,cameraParams.eyez);
+                }
+            }
+            
+            /* Moves the camera "backward", in the positive Z direction, a given distance 'num' 
+            so long as the camera has not reached its starting point in front of the hemisphere at z = 1000 */ 
+            camera.stepBackward = function(num) {
+                if (cameraParams.eyez < 1000) {
+                    cameraParams.eyez = cameraParams.eyez + num; 
+                    this.position.set(cameraParams.eyex,cameraParams.eyey,cameraParams.eyez);
+                }
+            }
+            
+            /* Moves the camera's atY parameter in cameraParams by some given 'num' in the positive Y direction, then resets 'at' and calls the camera method .lookAt(at) so that the camera is now "looking upwards". */ 
+            camera.lookUp = function(num){
+                cameraParams.aty = cameraParams.aty + num; 
+                var at = new THREE.Vector3(cameraParams.atx, cameraParams.aty, cameraParams.atz);
+                this.at = at;
+                this.lookAt(at);
+            }
+            
+            /* Moves the camera's atY parameter in cameraParams by some given 'num' in the positive Y direction, then resets 'at' and calls the camera method .lookAt(at) so that the camera is now "looking downwards" so long as the camera does not pass its initial atY = 50 value. */ 
+            camera.lookDown = function(num){
+                if (cameraParams.aty > 50) {
+                    cameraParams.aty = cameraParams.aty - num;
+                    var at = new THREE.Vector3(cameraParams.atx, cameraParams.aty, cameraParams.atz);
+                    this.at = at;
+                    this.lookAt(at);
+                }
+            }
+            
+            /* Moves the camera's eyeY parameter in cameraParams by some given 'num' in the positive Y direction, then resets the camera's position with the method .position.set so that the camera has now "risen upwards". */
+            camera.riseUp = function(num){
+                cameraParams.eyey = cameraParams.eyey + num; 
+                this.position.set(cameraParams.eyex,cameraParams.eyey,cameraParams.eyez);
+            }
+
+            /* Moves the camera's eyeY parameter in cameraParams by some given 'num' in the negative Y direction, then resets the camera's position with the method .position.set so that the camera has now "lowered downwards" so long as the camera does not pass its initial eyeY = 50 value. */
+            camera.lowerDown = function(num){
+                if (cameraParams.eyey > 50) {
+                    cameraParams.eyey = cameraParams.eyey - num; 
+                    this.position.set(cameraParams.eyex,cameraParams.eyey,cameraParams.eyez);   
+                }
+            }
+            
+            /* Copied from: https://cs.wellesley.edu/~cs307/threejs/demos/Interaction/movingCamera2.js and modified to suit this scene: 
+            
+            Rotates the camera by some given 'angle', resetting the camera's at attribute and calling the .lookAt(at) method. */ 
+            camera.rotateBy = function (angle) {
+                // change the coordinates of VPN. Awesome that THREE.js has this method
+                this.vpn.applyAxisAngle( this.up, angle );
+                this.vright.applyAxisAngle( this.up, angle );
+                this.at.addVectors( this.position, this.vpn );
+                this.lookAt(this.at);
+            };
+            
+            return camera;  
+        }
+        
+        // Creates the perspective camera used in the scene: 
+        var movingCam = setupCamera();
+
+        // This will render the current state of the scene using the current camera.
+        // Invoked at the end of this code.
+        function render(camera) {
+            renderer.render(scene, camera);
+        }
+
+        /* This function will continue updating the animation and adjusting the camera when appropriate. Necessary because there are a significant number of textures that need to be loaded before the complete scene can be drawn, and each texture will finish loading at a different time. */
+        function loop() {
+            render(movingCam);
+            requestAnimationFrame(loop);
+        }
+        
+        // Creats the Book-Scape from the JS file and 
+        // adds it to the scene, then begins the animation/rendering function - loop():
+        var book = createBookSpace(); 
+        scene.add(book);
+        loop();
+
+        // Set up Event Listener: keyPress - 
+        // Adds user interaction capabilities associated with the camera via pressing keys: 
+        document.addEventListener('keypress', onKeyPress );
+        
+        function onKeyPress(event) {
+           var key = event.keyCode;
+           var ch = String.fromCharCode(key);
+           switch(ch) {
+                    case 'w': movingCam.stepForward(25); break;
+                    case 's': movingCam.stepBackward(25); break;
+                    case 'i': movingCam.lookUp(25); break;
+                    case 'j': movingCam.rotateBy(Math.PI/32);break;
+                    case 'k': movingCam.lookDown(25); break;
+                    case 'l': movingCam.rotateBy(-1*Math.PI/32); break;
+                    case 'u': movingCam.riseUp(25); break;
+                    case 'o': movingCam.lowerDown(25); break;
+                    default:
+                    //console.log("key "+ch+" is not handled");
+                }
+        }
+ 
+    </script>
+    </body>
+</html>
